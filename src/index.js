@@ -1,68 +1,159 @@
-import { DurableObject } from "cloudflare:workers";
-
-/**
- * Welcome to Cloudflare Workers! This is your first Durable Objects application.
- *
- * - Run `npm run dev` in your terminal to start a development server
- * - Open a browser tab at http://localhost:8787/ to see your Durable Object in action
- * - Run `npm run deploy` to publish your application
- *
- * Learn more at https://developers.cloudflare.com/durable-objects
- */
-
-/**
- * Env provides a mechanism to reference bindings declared in wrangler.jsonc within JavaScript
- *
- * @typedef {Object} Env
- * @property {DurableObjectNamespace} MY_DURABLE_OBJECT - The Durable Object namespace binding
- */
-
-/** A Durable Object's behavior is defined in an exported Javascript class */
-export class MyDurableObject extends DurableObject {
-	/**
-	 * The constructor is invoked once upon creation of the Durable Object, i.e. the first call to
-	 * 	`DurableObjectStub::get` for a given identifier (no-op constructors can be omitted)
-	 *
-	 * @param {DurableObjectState} ctx - The interface for interacting with Durable Object state
-	 * @param {Env} env - The interface to reference bindings declared in wrangler.jsonc
-	 */
-	constructor(ctx, env) {
-		super(ctx, env);
-	}
-
-	/**
-	 * The Durable Object exposes an RPC method sayHello which will be invoked when when a Durable
-	 *  Object instance receives a request from a Worker via the same method invocation on the stub
-	 *
-	 * @param {string} name - The name provided to a Durable Object instance from a Worker
-	 * @returns {Promise<string>} The greeting to be sent back to the Worker
-	 */
-	async sayHello(name) {
-		return `Hello, ${name}!`;
-	}
-}
+// Cloudflare Worker for Contact Form
+// This handles form submissions and sends emails via Resend
 
 export default {
-	/**
-	 * This is the standard fetch handler for a Cloudflare Worker
-	 *
-	 * @param {Request} request - The request submitted to the Worker from the client
-	 * @param {Env} env - The interface to reference bindings declared in wrangler.jsonc
-	 * @param {ExecutionContext} ctx - The execution context of the Worker
-	 * @returns {Promise<Response>} The response to be sent back to the client
-	 */
-	async fetch(request, env, ctx) {
-		// Create a stub to open a communication channel with the Durable Object
-		// instance named "foo".
-		//
-		// Requests from all Workers to the Durable Object instance named "foo"
-		// will go to a single remote Durable Object instance.
-		const stub = env.MY_DURABLE_OBJECT.getByName("foo");
+  async fetch(request, env) {
+    // Handle CORS preflight requests
+    if (request.method === 'OPTIONS') {
+      return new Response(null, {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type',
+        },
+      });
+    }
 
-		// Call the `sayHello()` RPC method on the stub to invoke the method on
-		// the remote Durable Object instance.
-		const greeting = await stub.sayHello("world");
+    // Only allow POST requests to /api/contact
+    if (request.method !== 'POST' || !request.url.includes('/api/contact')) {
+      return new Response('Not Found', { status: 404 });
+    }
 
-		return new Response(greeting);
-	}
+    try {
+      const data = await request.json();
+      const { name, email, subject, message, turnstileToken } = data;
+
+      // Validate required fields
+      if (!name || !email || !subject || !message || !turnstileToken) {
+        return jsonResponse({ error: 'All fields are required' }, 400);
+      }
+
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return jsonResponse({ error: 'Invalid email format' }, 400);
+      }
+
+      // Verify Turnstile CAPTCHA
+      const turnstileValid = await verifyTurnstile(
+        turnstileToken,
+        env.TURNSTILE_SECRET_KEY,
+        request.headers.get('CF-Connecting-IP')
+      );
+
+      if (!turnstileValid) {
+        return jsonResponse({ error: 'CAPTCHA verification failed' }, 400);
+      }
+
+      // Send email via Resend
+      const emailSent = await sendEmail(
+        {
+          name,
+          email,
+          subject,
+          message,
+        },
+        env.RESEND_API_KEY,
+        env.FROM_EMAIL,
+        env.TO_EMAIL
+      );
+
+      if (emailSent) {
+        return jsonResponse({ success: true, message: 'Email sent successfully' });
+      } else {
+        return jsonResponse({ error: 'Failed to send email' }, 500);
+      }
+    } catch (error) {
+      console.error('Error processing request:', error);
+      return jsonResponse({ error: 'Internal server error' }, 500);
+    }
+  },
 };
+
+// Verify Cloudflare Turnstile token
+async function verifyTurnstile(token, secretKey, ip) {
+  const formData = new URLSearchParams();
+  formData.append('secret', secretKey);
+  formData.append('response', token);
+  if (ip) formData.append('remoteip', ip);
+
+  const response = await fetch(
+    'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: formData,
+    }
+  );
+
+  const result = await response.json();
+  return result.success;
+}
+
+// Send email using Resend API
+async function sendEmail(formData, apiKey, fromEmail, destinationEmail) {
+  const { name, email, subject, message } = formData;
+
+  const emailBody = {
+    from: `xContact Form <${fromEmail}>`, // Use your verified domain
+    to: destinationEmail,
+    subject: `xContact Form: ${subject}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #333; border-bottom: 2px solid #667eea; padding-bottom: 10px;">
+          New Contact Form Submission
+        </h2>
+        <div style="margin: 20px 0;">
+          <p style="margin: 10px 0;"><strong>Name:</strong> ${escapeHtml(name)}</p>
+          <p style="margin: 10px 0;"><strong>Email:</strong> ${escapeHtml(email)}</p>
+          <p style="margin: 10px 0;"><strong>Subject:</strong> ${escapeHtml(subject)}</p>
+        </div>
+        <div style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
+          <p style="margin: 0;"><strong>Message:</strong></p>
+          <p style="margin: 10px 0; white-space: pre-wrap;">${escapeHtml(message)}</p>
+        </div>
+        <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
+        <p style="color: #666; font-size: 12px;">
+          Reply to: <a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a>
+        </p>
+      </div>
+    `,
+    reply_to: email,
+  };
+
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify(emailBody),
+  });
+
+  return response.ok;
+}
+
+// Escape HTML to prevent XSS
+function escapeHtml(text) {
+  const map = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;',
+  };
+  return text.replace(/[&<>"']/g, (m) => map[m]);
+}
+
+// Helper function to create JSON responses
+function jsonResponse(data, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+    },
+  });
+}
