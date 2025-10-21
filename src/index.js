@@ -97,9 +97,9 @@ async function sendEmail(formData, apiKey, fromEmail, destinationEmail) {
   const { name, email, subject, message } = formData;
 
   const emailBody = {
-    from: `xContact Form <${fromEmail}>`, // Use your verified domain
+    from: `Contact Form <${fromEmail}>`, // Use your verified domain
     to: destinationEmail,
-    subject: `xContact Form: ${subject}`,
+    subject: `Contact Form: ${subject}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #333; border-bottom: 2px solid #667eea; padding-bottom: 10px;">

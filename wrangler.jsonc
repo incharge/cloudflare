@@ -4,7 +4,7 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "stage02",
+	"name": "incharge",
 	"main": "src/index.js",
 	"compatibility_date": "2025-10-14",
 	"assets": {
