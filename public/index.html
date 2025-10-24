@@ -190,10 +190,15 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const turnstileResponse = turnstile.getResponse();
-            
-            if (!turnstileResponse) {
-                showMessage('Please complete the CAPTCHA verification.', 'error');
+            let turnstileResponse = null;
+            try {
+                turnstileResponse = turnstile.getResponse();
+                if (!turnstileResponse) {
+                    showMessage('Please complete the CAPTCHA verification.', 'error');
+                    return;
+                }
+            } catch (error) {
+                showMessage(`CAPTCHA error: ${error.message}`, 'error');
                 return;
             }
 
@@ -208,6 +213,7 @@
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<span class="spinner"></span>Sending...';
 
+            let status = 0;
             try {
                 const response = await fetch('/api/contact', {
                     method: 'POST',
@@ -216,21 +222,22 @@
                     },
                     body: JSON.stringify(formData)
                 });
-
-                const result = await response.json();
+                status = response.status;
 
                 if (response.ok) {
                     showMessage('Message sent successfully! We\'ll get back to you soon.', 'success');
                     form.reset();
-                    turnstile.reset();
                 } else {
+                    const result = await response.json();
                     showMessage(result.error || 'Failed to send message. Please try again.', 'error');
-                    turnstile.reset();
                 }
             } catch (error) {
-                showMessage('Network error. Please check your connection and try again.', 'error');
-                turnstile.reset();
+                if (status==429)
+                    showMessage('The form was submitted more than once.  Please wait 10 seconds and try again', 'error');
+                else
+                    showMessage(`Network error (${status}). Please check your connection and try again.`, 'error');
             } finally {
+                turnstile.reset();
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = 'Send Message';
             }

@@ -14,6 +14,11 @@ export default {
       });
     }
 
+    const url = new URL(request.url);
+    if (url.searchParams.get("test") != null) {
+        return jsonResponse({ error: 'testing (get)' }, 400);
+    }
+
     // Only allow POST requests to /api/contact
     if (request.method !== 'POST' || !request.url.includes('/api/contact')) {
       return new Response('Not Found', { status: 404 });
@@ -22,6 +27,15 @@ export default {
     try {
       const data = await request.json();
       const { name, email, subject, message, turnstileToken } = data;
+
+      if (name == 'test') {
+          return jsonResponse({ error: 'testing (post)' }, 400);
+      }
+
+      if (name == 'error') {
+          throw  new Error("throwing an error");;
+      }
+
 
       // Validate required fields
       if (!name || !email || !subject || !message || !turnstileToken) {
