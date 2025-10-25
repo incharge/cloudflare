@@ -40,6 +40,8 @@ See Debugging Cloudflare https://blog.cloudflare.com/debugging-cloudflare-worker
 Error: 43778 Cloudflare Turnstile Could not find widget  
 This error occurrs when the page is debugged as a file, rather than served by a web server, because Turnstile fails to initialise.
 
+When debugging index.html with the production turnstile site key, the turnstile widget sometimes fails to initialise, and shows the message `Stuck here?`.  Try using a test site key.
+
 # Testing
 To override Turnstile, find the `cf-turnstile` element in index.html and change the `data-sitekey` value e.g. to `1x00000000000000000000AA` to always pass. For other test site keys see https://developers.cloudflare.com/turnstile/troubleshooting/testing/
 

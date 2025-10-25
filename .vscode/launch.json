@@ -8,7 +8,7 @@
             "name": "Launch index.html in Chrome",
             "type": "chrome",
             "request": "launch",
-            "url": "http://localhost:8787/basic",
+            "url": "http://localhost:8787",
             "webRoot": "${workspaceFolder}/public/",
         },
         {
