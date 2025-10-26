@@ -113,7 +113,7 @@ async function verifyTurnstile(token, secretKey, ip) {
 }
 
 async function sendEmail(formObject, fromEmail, toEmail, env) {
-  const maxFieldLength = 1024;
+  const maxFieldLength = 4096;
   const maxFormLength = 1024 * 1024;
   const maxFields = 64;
   const defaultSubject = 'Web form submission';
@@ -175,7 +175,7 @@ async function sendEmail(formObject, fromEmail, toEmail, env) {
 
 async function sendEmailCloudflare(formObject, fromEmail, toEmail, replyto, subject, emailBinding) {
   const msg = createMimeMessage();
-  msg.setSender({ name: "Web form", addr: `${fromEmail}` });
+  msg.setSender({ name: "Web form via CloudFlare", addr: `${fromEmail}` });
   msg.setRecipient(toEmail);
   msg.setSubject(subject);
   msg.addMessage({
@@ -204,7 +204,7 @@ async function sendEmailCloudflare(formObject, fromEmail, toEmail, replyto, subj
 async function sendEmailResend(formObject, fromEmail, toEmail,  replyto, subject, apiKey) {
   try {
     const emailBody = {
-      from: `Web form<${fromEmail}>`,
+      from: `Web form via Resend<${fromEmail}>`,
       to: toEmail,
       subject: subject,
       html: FormatEmail(formObject),
