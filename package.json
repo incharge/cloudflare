@@ -1,13 +1,16 @@
 {
-	"name": "stage02",
-	"version": "0.0.0",
+	"name": "cloudflare-formmail",
+	"version": "0.0.1",
 	"private": true,
 	"scripts": {
 		"deploy": "wrangler deploy",
 		"dev": "wrangler dev --ip localhost",
 		"start": "wrangler dev"
 	},
+	"dependencies": {
+		"mimetext": "^3.0.27"
+	},
 	"devDependencies": {
-		"wrangler": "^4.43.0"
+		"wrangler": "^4.45.0"
 	}
 }

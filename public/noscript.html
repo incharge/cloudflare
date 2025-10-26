@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Test contact form</title>
+</head>
+<body>
+  <h1>Test contact form</h1>
+  <form action="/api/contact" method="POST">
+    <label for="name">Name:</label><br>
+    <input type="text" id="name" name="name" value="test name" required><br>
+    <label for="email">Email:</label><br>
+    <input type="email" id="email" name="email" value="test@example.com" required><br>
+    <label for="message">subject:</label><br>
+    <input type="text" id="email" name="subject" value="Testing" required><br>
+    <label for="message">message:</label><br>
+    <input type="text" id="message" name="message" value="Test message" required><br>
+    <label for="turnstileToken">Email:</label><br>
+    <input type="text" id="turnstileToken" name="turnstileToken" value="n/a" required><br>
+    <br>
+    <button type="submit">Submit</button>
+  </form>
+</body>
+</html>

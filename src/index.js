@@ -1,5 +1,9 @@
-// Cloudflare Worker for Contact Form
-// This handles form submissions and sends emails via Resend
+// Cloudflare formmail Worker
+// This handles form submissions and sends emails via:
+// - Cloudflare email routing
+// - Resend
+import { EmailMessage } from "cloudflare:email";
+import { createMimeMessage } from "mimetext";
 
 export default {
   async fetch(request, env) {
@@ -25,7 +29,19 @@ export default {
     }
 
     try {
-      const data = await request.json();
+      let data = {};
+      const contentType = request.headers.get("content-type");
+      if (contentType.includes("application/json")) {
+        data = await request.json();
+      } else if (contentType.includes("form")) {
+        const formData = await request.formData();
+        for (const [key, value] of formData) {
+          data[key] = value;
+        }
+      } else {
+          return jsonResponse({ error: 'Unexpected content type' }, 400);
+      }
+
       const { name, email, subject, message, turnstileToken } = data;
 
       if (name == 'test') {
@@ -35,7 +51,6 @@ export default {
       if (name == 'error') {
           throw  new Error("throwing an error");;
       }
-
 
       // Validate required fields
       if (!name || !email || !subject || !message || !turnstileToken) {
@@ -48,16 +63,19 @@ export default {
         return jsonResponse({ error: 'Invalid email format' }, 400);
       }
 
-      // Verify Turnstile CAPTCHA
-      const turnstileValid = await verifyTurnstile(
-        turnstileToken,
-        env.TURNSTILE_SECRET_KEY,
-        request.headers.get('CF-Connecting-IP')
-      );
+      if (Object.hasOwn(env, 'TURNSTILE_SECRET_KEY'))
+      {
+        // Verify Turnstile CAPTCHA
+        const turnstileValid = await verifyTurnstile(
+          turnstileToken,
+          env.TURNSTILE_SECRET_KEY,
+          request.headers.get('CF-Connecting-IP')
+        );
 
-      if (!turnstileValid) {
-        return jsonResponse({ error: 'CAPTCHA verification failed' }, 400);
-      }
+        if (!turnstileValid) {
+          return jsonResponse({ error: 'CAPTCHA verification failed' }, 400);
+        }
+      }  
 
       // Send email via Resend
       const emailSent = await sendEmail(
@@ -67,9 +85,9 @@ export default {
           subject,
           message,
         },
-        env.RESEND_API_KEY,
         env.FROM_EMAIL,
-        env.TO_EMAIL
+        env.TO_EMAIL,
+        env
       );
 
       if (emailSent) {
@@ -79,7 +97,7 @@ export default {
       }
     } catch (error) {
       console.error('Error processing request:', error);
-      return jsonResponse({ error: 'Internal server error' }, 500);
+      return jsonResponse({ error: `Internal server error: ${error.message}` }, 500);
     }
   },
 };
@@ -106,15 +124,70 @@ async function verifyTurnstile(token, secretKey, ip) {
   return result.success;
 }
 
+async function sendEmail(formData, fromEmail, toEmail, env) {
+  let success = false;
+  if (Object.hasOwn(env, 'EMAIL_BINDING')) {
+      success = await sendEmailCloudflare(formData, fromEmail, toEmail, env.EMAIL_BINDING)
+  }
+  else if (Object.hasOwn(env, 'RESEND_API_KEY')) {
+      success = await sendEmailResend(formData, fromEmail, toEmail, env.RESEND_API_KEY)
+  }
+  return success;
+}
+
+async function sendEmailCloudflare(formData, fromEmail, toEmail, emailBinding) {
+  const { name, email, subject, message } = formData;
+    const msg = createMimeMessage();
+    msg.setSender({ name: "Website contact", addr: `${fromEmail}` });
+    msg.setRecipient(toEmail);
+    //msg.reply_to(email);
+    msg.setSubject(subject);
+    msg.addMessage({
+      contentType: "text/html",
+      data: FormatEmail(formData),
+    });
+
+    let emailMessage = new EmailMessage(
+      fromEmail,
+      toEmail,
+      msg.asRaw(),
+    );
+    try {
+      await emailBinding.send(emailMessage);
+    } catch (e) {
+      return false; // new Response(e.message);
+    }
+
+    return true; // new Response("Hello Send Email World!");
+}
+
 // Send email using Resend API
-async function sendEmail(formData, apiKey, fromEmail, destinationEmail) {
+async function sendEmailResend(formData, fromEmail, toEmail, apiKey) {
   const { name, email, subject, message } = formData;
 
   const emailBody = {
     from: `Contact Form <${fromEmail}>`, // Use your verified domain
-    to: destinationEmail,
+    to: toEmail,
     subject: `Contact Form: ${subject}`,
-    html: `
+    html: FormatEmail(formData),
+    reply_to: email,
+  };
+
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify(emailBody),
+  });
+
+  return response.ok;
+}
+
+function FormatEmail(formData) {
+  const { name, email, subject, message } = formData;
+    return `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #333; border-bottom: 2px solid #667eea; padding-bottom: 10px;">
           New Contact Form Submission
@@ -133,20 +206,7 @@ async function sendEmail(formData, apiKey, fromEmail, destinationEmail) {
           Reply to: <a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a>
         </p>
       </div>
-    `,
-    reply_to: email,
-  };
-
-  const response = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify(emailBody),
-  });
-
-  return response.ok;
+    `;
 }
 
 // Escape HTML to prevent XSS
