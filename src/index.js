@@ -3,7 +3,7 @@
 // - Cloudflare email routing
 // - Resend
 import { EmailMessage } from "cloudflare:email";
-import { createMimeMessage } from "mimetext";
+import { createMimeMessage, Mailbox } from "mimetext";
 
 export default {
   async fetch(request, env) {
@@ -77,7 +77,6 @@ export default {
         }
       }  
 
-      // Send email via Resend
       const emailSent = await sendEmail(
         {
           name,
@@ -146,6 +145,7 @@ async function sendEmailCloudflare(formData, fromEmail, toEmail, emailBinding) {
       contentType: "text/html",
       data: FormatEmail(formData),
     });
+    msg.setHeader('Reply-To', new Mailbox(email))
 
     let emailMessage = new EmailMessage(
       fromEmail,
