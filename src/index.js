@@ -113,24 +113,54 @@ async function verifyTurnstile(token, secretKey, ip) {
 }
 
 async function sendEmail(formObject, fromEmail, toEmail, env) {
-  let subject;
+  const maxFieldLength = 1024;
+  const maxFormLength = 1024 * 1024;
+  const maxFields = 64;
+  const defaultSubject = 'Web form submission';
   let replyto = null;
+  let subject;
 
+  // Check that the form is within maximum size limits
+  let totalLength = 0;
+  let totalFields = 0;
+  for (const key in formObject) {
+      if (Object.prototype.hasOwnProperty.call(formObject, key)) {
+        const length = formObject[key].length;
+        totalFields += 1;
+        if (maxFieldLength > 0 && length > maxFieldLength) {
+          return `The ${key} field exceeds the maximun length of ${maxFieldLength} characters`;
+        }
+        totalLength += formObject[key].length;
+        if (maxFormLength > 0 && totalLength > maxFormLength) {
+          return `The form data exceeds the maximun length of ${maxFormLength} characters`;
+        }
+        if (maxFields > 0 && totalFields > maxFields) {
+          return `The form contains more than the maximum allowed ${maxFields} fields`;
+        }
+      }
+  }
+
+  // If present, use the 'email' field as the reply-to email address
   if (Object.hasOwn(formObject, 'email')) {
       // Validate email format
       replyto = formObject.email;
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(replyto)) {
-        return 'Invalid email address format';
+        return 'The email address format is invalid';
       }
   }
 
+  // If present, use the 'subject' field as the email subject, otherwise use the default
   if (Object.hasOwn(formObject, 'subject')) {
     subject = formObject.subject;
-    delete formObject['subject'];
+    if (subject.length > 80) {
+      subject = subject.substr(0, 80);
+    }
+    else
+      delete formObject['subject'];
   }
   else {
-    subject = 'Web form submission';
+    subject = defaultSubject;
   }
 
   if (Object.hasOwn(env, 'EMAIL_BINDING')) {
@@ -140,7 +170,7 @@ async function sendEmail(formObject, fromEmail, toEmail, env) {
       return await sendEmailResend(formObject, fromEmail, toEmail, replyto, subject, env.RESEND_API_KEY)
   }
 
-  return "No email sender is defined";
+  return "No email delivery mechanism is available";
 }
 
 async function sendEmailCloudflare(formObject, fromEmail, toEmail, replyto, subject, emailBinding) {
@@ -172,26 +202,30 @@ async function sendEmailCloudflare(formObject, fromEmail, toEmail, replyto, subj
 
 // Send email using Resend API
 async function sendEmailResend(formObject, fromEmail, toEmail,  replyto, subject, apiKey) {
-  const emailBody = {
-    from: `Web form<${fromEmail}>`,
-    to: toEmail,
-    subject: subject,
-    html: FormatEmail(formObject),
-  };
-  if (replyto) {
-      emailBody.reply_to = replyto;
-  }
+  try {
+    const emailBody = {
+      from: `Web form<${fromEmail}>`,
+      to: toEmail,
+      subject: subject,
+      html: FormatEmail(formObject),
+    };
+    if (replyto) {
+        emailBody.reply_to = replyto;
+    }
 
-  const response = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify(emailBody),
-  });
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify(emailBody),
+    });
 
-  return response.ok ? null : "Resend error";
+    return response.ok ? null : response.statusText;
+  } catch (error) {
+    return error.message;
+ }
 }
 
 function FormatEmail(formObject) {
