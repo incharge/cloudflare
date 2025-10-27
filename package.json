@@ -5,12 +5,15 @@
 	"scripts": {
 		"deploy": "wrangler deploy",
 		"dev": "wrangler dev --ip localhost",
-		"start": "wrangler dev"
+		"start": "wrangler dev",
+		"test": "vitest"
 	},
 	"dependencies": {
+		"he": "^1.2.0",
 		"mimetext": "^3.0.27"
 	},
 	"devDependencies": {
+		"vitest": "^4.0.3",
 		"wrangler": "^4.45.0"
 	}
 }
