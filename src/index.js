@@ -4,6 +4,7 @@
 // - Resend
 import { EmailMessage } from "cloudflare:email";
 import { createMimeMessage, Mailbox } from "mimetext";
+import { textToHtml } from './textToHtml.js'
 
 export default {
   async fetch(request, env) {
@@ -237,31 +238,17 @@ function FormatEmail(formObject) {
 
 Object.keys(formObject).forEach(function(key) {
   if ( message.indexOf("\n") == -1 )
-    message += `\t<p style="margin: 10px 0;"><strong>${key}:</strong>${escapeHtml(formObject[key])}</p>\n`;
+    message += `\t<p style="margin: 10px 0;"><strong>${key}:</strong>${textToHtml(formObject[key])}</p>\n`;
   else
     message += `\t<div style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
 \t\t<p style="margin: 0;"><strong>${key}:</strong></p>
-\t\t<p style="margin: 10px 0; white-space: pre-wrap;">${escapeHtml(formObject[key])}</p>
+\t\t<p style="margin: 10px 0; white-space: pre-wrap;">${textToHtml(formObject[key])}</p>
 \t</div>
 `;
 });
 
   message += '</div>';
   return message;
-}
-
-// Escape HTML to prevent XSS
-function escapeHtml(text) {
-  const map = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;',
-    "\n": '<br>\n',
-    "\r": '',
-  };
-  return text.replace(/[&<>"'\n\r]/g, (m) => map[m]);
 }
 
 // Helper function to create JSON responses
