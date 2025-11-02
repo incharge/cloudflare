@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>inCharge coaching</title>
+    <title>inCharge - Goal-Oriented Coaching</title>
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <style>
         * {
@@ -14,97 +14,198 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            line-height: 1.6;
+            color: #2a2a2a;
+            background: #ffffff;
+        }
+
+        header {
+            background: #ffffff;
+            border-bottom: 2px solid #e0e0e0;
+            padding: 1.5rem 2rem;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            padding: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            letter-spacing: -0.5px;
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            color: #4a4a4a;
+            font-weight: 500;
         }
 
         .container {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 500px;
-            width: 100%;
-            padding: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
         }
 
-        h1 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 28px;
+        section {
+            padding: 4rem 0;
         }
 
-        .subtitle {
+        .intro-section {
+            background: #f8f8f8;
+            padding: 5rem 0;
+        }
+
+        .intro-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .profile-image {
+            width: 280px;
+            height: 280px;
+            background: #d0d0d0;
+            float: left;
+            margin: 0 2rem 1rem 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: #666;
-            margin-bottom: 30px;
-            font-size: 14px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .intro-text {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: #3a3a3a;
+        }
+
+        .intro-text p {
+            margin-bottom: 1.5rem;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: #1a1a1a;
+            font-weight: 700;
+        }
+
+        .video-section {
+            background: #ffffff;
+            text-align: center;
+        }
+
+        .video-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #e0e0e0;
+            aspect-ratio: 16/9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .testimonials-section {
+            background: #f8f8f8;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .testimonial {
+            background: #ffffff;
+            padding: 2rem;
+            border-left: 4px solid #4a4a4a;
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 1rem;
+            color: #3a3a3a;
+            line-height: 1.7;
+        }
+
+        .testimonial-author {
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .book-section {
+            background: #ffffff;
+        }
+
+        .contact-section {
+            background: #f8f8f8;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 1.5rem;
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
-            color: #333;
+            margin-bottom: 0.5rem;
             font-weight: 500;
-            font-size: 14px;
+            color: #2a2a2a;
         }
 
         input, textarea {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e1e4e8;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.3s;
+            padding: 0.75rem;
+            border: 2px solid #d0d0d0;
+            background: #f8f8f8;
+            font-size: 1rem;
             font-family: inherit;
+            transition: border-color 0.3s;
+            border-radius: 8px;
         }
+
 
         input:focus, textarea:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #4a4a4a;
+            background: #ffffff;
         }
 
         textarea {
             resize: vertical;
-            min-height: 120px;
-        }
-
-        .captcha-container {
-            margin: 20px 0;
-            display: flex;
-            justify-content: center;
+            min-height: 150px;
         }
 
         button {
             width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: #2a2a2a;
+            color: #ffffff;
+            padding: 1rem 3rem;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: background 0.3s;
+            border-radius: 8px;
         }
 
-        button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        button:hover {
+            background: #1a1a1a;
         }
 
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .message {
+                .message {
             margin-top: 20px;
             padding: 12px;
             border-radius: 8px;
@@ -142,45 +243,139 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        footer {
+            background: #1a1a1a;
+            color: #ffffff;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer-content p {
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 375px) {
+        }
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .logo {
+                font-size: 1.75rem;
+            }
+
+            .tagline {
+                font-size: 1rem;
+            }
+
+            .profile-image {
+                display: block;
+                width: 100%;
+                height: auto;
+                float: none;
+                margin: 0 auto 1.5rem auto;
+            }
+
+        }        
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Contact inCharge Ltd</h1>
-        <p class="subtitle">Fill out the form below and we'll get back to you soon.</p>
-        
-        <form id="contactForm">
-            <div class="form-group">
-                <label for="name">Name *</label>
-                <input type="text" id="name" name="name" required>
+    <header>
+        <div class="logo">inCharge</div>
+        <div class="tagline">Take charge of what comes next.</div>
+    </header>
+
+    <section class="intro-section">
+        <div class="container">
+            <div class="intro-content">
+                <img class="profile-image" src="img/Julian_Price_375.jpg" />
+                <div class="intro-text">
+                    <p>You know where you want to go. You might not be entirely sure how to get there yet, or what's holding you back. That's where I come in.</p>
+
+                    <p>I'm Julian Price.  I work with business owners and professionals across the UK who are ready to make real progress - whether that's growing your business, developing your career, or making meaningful life changes.</p>
+
+                    <p>This isn't about me telling you what to do. You are the expert on your own life. I'm here to help you identify what you really want, work out what's already working for you, and create a practical plan to get there. We'll meet regularly to keep momentum going, adapt when things change, and tackle whatever gets in the way.</p>
+
+                    <p>I've spent 27 years working with businesses - from corporate software projects to running my own web development company. I've seen what helps people thrive and what holds them back. Now, as a qualified coach, I bring that experience to help you achieve your goals.</p>
+                </div>
             </div>
+        </div>
+    </section>
 
-            <div class="form-group">
-                <label for="email">Email *</label>
-                <input type="email" id="email" name="email" required>
+    <section class="book-section">
+        <div class="container">
+            <h2>Book a free initial consultation</h2>
+            <div class="form-container">
+			   <!-- Cal inline embed code begins -->
+			   <div style="width:100%;height:100%;overflow:scroll" id="my-cal-inline-initial-consultation"></div>
+			   <script type="text/javascript">
+			   (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if(typeof namespace === "string"){cal.ns[namespace] = cal.ns[namespace] || api;p(cal.ns[namespace], ar);p(cal, ["initNamespace", namespace]);} else p(cal, ar); return;} p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
+			   Cal("init", "initial-consultation", {origin:"https://app.cal.com"});
+
+			   Cal.ns["initial-consultation"]("inline", {
+				   elementOrSelector:"#my-cal-inline-initial-consultation",
+				   config: {"layout":"month_view"},
+				   calLink: "incharge/initial-consultation",
+			   });
+
+			   Cal.ns["initial-consultation"]("ui", {"hideEventTypeDetails":true,"layout":"month_view"});
+			   </script>
+			<!-- Cal inline embed code ends -->
             </div>
+        </div>
+    </section>
 
-            <div class="form-group">
-                <label for="subject">Subject *</label>
-                <input type="text" id="subject" name="subject" required>
+    <section class="contact-section">
+        <div class="container">
+            <h2>...or send a message</h2>
+            <div class="form-container">
+				<p class="subtitle">Fill out the form below and we'll get back to you soon.</p>
+				<form id="contactForm">
+					<div class="form-group">
+						<label for="name">Name *</label>
+						<input type="text" id="name" name="name" required>
+					</div>
+
+					<div class="form-group">
+						<label for="email">Email *</label>
+						<input type="email" id="email" name="email" required>
+					</div>
+
+
+					<div class="form-group">
+						<label for="message">Message *</label>
+						<textarea id="message" name="message" required></textarea>
+					</div>
+
+					<div class="captcha-container">
+						<div class="cf-turnstile" data-sitekey="0x4AAAAAAB69zO3J9FFp4gVd"></div>
+					</div>
+
+					<button type="submit" id="submitBtn">
+						Send Message
+					</button>
+				</form>
+				<div id="statusMessage" class="message"></div>
             </div>
+        </div>
+    </section>
 
-            <div class="form-group">
-                <label for="message">Message *</label>
-                <textarea id="message" name="message" required></textarea>
-            </div>
-
-            <div class="captcha-container">
-                <div class="cf-turnstile" data-sitekey="0x4AAAAAAB69zO3J9FFp4gVd"></div>
-            </div>
-
-            <button type="submit" id="submitBtn">
-                Send Message
-            </button>
-        </form>
-
-        <div id="statusMessage" class="message"></div>
-    </div>
+    <footer>
+        <div class="footer-content">
+            <p><strong>inCharge Ltd</strong></p>
+            <p>Remote coaching via Zoom | UK-based clients</p>
+            <p>Sessions: £80 per hour</p>
+        </div>
+    </footer>
 
     <script>
         const form = document.getElementById('contactForm');
@@ -190,7 +385,7 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            let turnstileResponse = null;
+            let turnstileResponse = "0";
             try {
                 turnstileResponse = turnstile.getResponse();
                 if (!turnstileResponse) {
@@ -205,7 +400,6 @@
             const formData = {
                 name: document.getElementById('name').value,
                 email: document.getElementById('email').value,
-                subject: document.getElementById('subject').value,
                 message: document.getElementById('message').value,
                 turnstileToken: turnstileResponse
             };
