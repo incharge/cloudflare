@@ -32,6 +32,16 @@
             z-index: 100;
         }
 
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            font-weight: 700;
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+        }
+
         .logo {
             font-size: 2rem;
             font-weight: 700;
@@ -82,54 +92,6 @@
         .intro-text {
             font-size: 1.15rem;
             line-height: 1.8;
-        }
-
-        .intro-text p {
-            margin-bottom: 1.5rem;
-        }
-
-        h2 {
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
-            font-weight: 700;
-        }
-
-        .video-section {
-            text-align: center;
-        }
-
-        .video-container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: #e0e0e0;
-            aspect-ratio: 16/9;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #666;
-            font-size: 1.1rem;
-        }
-
-        .testimonials-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-
-        .testimonial {
-            padding: 2rem;
-            border-left: 4px solid #4a4a4a;
-        }
-
-        .testimonial-text {
-            font-style: italic;
-            margin-bottom: 1rem;
-            line-height: 1.7;
-        }
-
-        .testimonial-author {
-            font-weight: 600;
         }
 
         .form-container {
@@ -321,6 +283,13 @@
     <section class="book-section odd-section">
         <div class="container">
             <h2>Book a free initial consultation</h2>
+
+            <div class="form-container">
+                <p>You want something to change.  Maybe you're feeling stuck, seeking clarity, or ready to move forward with something important. Whatever brought you here, an initial consultation is a no-pressure space to explore whether my coaching is right for you.</p>
+                <p>In our conversation, we'll talk about what matters most to you right now, what you're hoping to achieve, and how coaching might support you. There's no commitment—just an honest, open conversation about your goals and my approach.</p>
+                <p>Many people find that simply articulating what they want in a supportive space brings unexpected clarity. At the very least, you'll leave our call with something valuable. At best, it could be the first step toward the change you've been considering.</p>
+                <p><b>Choose a time that works for you below, or ask a question first via the <a href="#contact-section">contact form</a> below.</b></p>
+            </div>
             <div class="form-container">
 			   <!-- Cal inline embed code begins -->
 			   <div style="width:100%;height:100%;overflow:scroll" id="my-cal-inline-initial-consultation"></div>
@@ -341,11 +310,12 @@
         </div>
     </section>
 
-    <section class="contact-section">
+    <section id="contact-section">
         <div class="container">
-            <h2>...or send a message</h2>
+            <h2>Ask a question</h2>
             <div class="form-container">
-				<p class="subtitle">Fill out the form below and we'll get back to you soon.</p>
+				<p class="subtitle">If there's no convenient time available, or you'd like to ask a question first, please fill out the form below and I'll get back to you as soon as possible.
+                </p>
 				<form id="contactForm">
 					<div class="form-group">
 						<label for="name">Name *</label>
