@@ -20,8 +20,10 @@
         }
 
         header {
+            max-width: 1200px;
             background: #ffffff;
             border-bottom: 2px solid #e0e0e0;
+            margin: 0 auto;
             padding: 1.5rem 2rem;
             display: flex;
             justify-content: space-between;
@@ -48,7 +50,7 @@
             padding: 0 2rem;
         }
 
-        section {
+        section, .section {
             padding: 4rem 0;
         }
         .odd-section {
@@ -291,7 +293,7 @@
             input:focus, textarea:focus {
                 border-color: #eee;
             }            
-
+        }
     </style>
 </head>
 <body>
@@ -300,10 +302,10 @@
         <div class="tagline">Take charge of what comes next.</div>
     </header>
 
-    <section class="intro-section">
+    <div class="section intro-section">
         <div class="container">
             <div class="intro-content">
-                <img class="profile-image" src="img/Julian_Price_375.jpg" />
+                <img class="profile-image" alt="Julian Price" src="img/Julian_Price_375.jpg">
                 <div class="intro-text">
                     <p>You know where you want to go. You might not be entirely sure how to get there yet, or what's holding you back. That's where I come in.</p>
 
@@ -315,7 +317,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 
     <section class="book-section odd-section">
         <div class="container">
@@ -323,18 +325,18 @@
             <div class="form-container">
 			   <!-- Cal inline embed code begins -->
 			   <div style="width:100%;height:100%;overflow:scroll" id="my-cal-inline-initial-consultation"></div>
-			   <script type="text/javascript">
-			   (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if(typeof namespace === "string"){cal.ns[namespace] = cal.ns[namespace] || api;p(cal.ns[namespace], ar);p(cal, ["initNamespace", namespace]);} else p(cal, ar); return;} p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
-			   Cal("init", "initial-consultation", {origin:"https://app.cal.com"});
+			   <script>
+                    (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if(typeof namespace === "string"){cal.ns[namespace] = cal.ns[namespace] || api;p(cal.ns[namespace], ar);p(cal, ["initNamespace", namespace]);} else p(cal, ar); return;} p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
+                    Cal("init", "initial-consultation", {origin:"https://app.cal.com"});
 
-			   Cal.ns["initial-consultation"]("inline", {
-				   elementOrSelector:"#my-cal-inline-initial-consultation",
-				   config: {"layout":"month_view"},
-				   calLink: "incharge/initial-consultation",
-			   });
+                    Cal.ns["initial-consultation"]("inline", {
+                        elementOrSelector:"#my-cal-inline-initial-consultation",
+                        config: {"layout":"month_view"},
+                        calLink: "incharge/initial-consultation",
+                    });
 
-			   Cal.ns["initial-consultation"]("ui", {"hideEventTypeDetails":true,"layout":"month_view"});
-			   </script>
+                    Cal.ns["initial-consultation"]("ui", {"hideEventTypeDetails":true,"layout":"month_view"});
+                </script>
 			<!-- Cal inline embed code ends -->
             </div>
         </div>
