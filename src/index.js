@@ -5,6 +5,7 @@
 import { EmailMessage } from "cloudflare:email";
 import { createMimeMessage, Mailbox } from "mimetext";
 import { textToHtml } from './textToHtml.js'
+import { validEmail } from './validEmail.js'
 
 export default {
   async fetch(request, env) {
@@ -141,14 +142,9 @@ async function sendEmail(formObject, fromEmail, toEmail, env) {
       }
   }
 
-  // If present, use the 'email' field as the reply-to email address
-  if (Object.hasOwn(formObject, 'email')) {
-      // Validate email format
-      replyto = formObject.email;
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(replyto)) {
-        return 'The email address format is invalid';
-      }
+  // If present, use the 'replyto' field as the reply-to email address
+  if (Object.hasOwn(formObject, 'replyto') && validEmail(formObject.email)) {
+      replyto = formObject.replyto;
   }
 
   // If present, use the 'subject' field as the email subject, otherwise use the default
