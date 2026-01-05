@@ -1,10 +1,13 @@
 # Web Contact form for CloudFlare
 
-✅ Secure - API keys hidden in Cloudflare Worker secrets
-✅ Spam Protection - Cloudflare Turnstile CAPTCHA
-✅ Email Delivery - Uses Resend API for reliable email sending
-✅ Input Validation - Both client and server-side validation
-✅ Error Handling - Comprehensive error messages and logging
+Use a CloudFlare worker to process a contact form and send an email.
+Note that this website uses Cloudflare Workers, not the older Cloudflare Pages.
+
+✅ Secure - API keys hidden in Cloudflare Worker secrets  
+✅ Spam Protection - Cloudflare Turnstile CAPTCHA  
+✅ Email Delivery - Uses Resend API for reliable email sending  
+✅ Input Validation - Both client and server-side validation  
+✅ Error Handling - Comprehensive error messages and logging  
 
 You will need
 - A Cloudflare account - the free tier is sufficient
@@ -12,14 +15,11 @@ You will need
     - Cloudflare DNS configuration. See https://developers.cloudflare.com/dns/zone-setups/full-setup/setup/
 - A Resend account - the free tier allows 100 emails per day. For Resend account setup instructions, see https://developers.cloudflare.com/workers/tutorials/send-emails-with-resend/
 
-Note that this website uses Cloudflare Workers, not the older Cloudflare Pages.
-
-The development environment requires:
-    - Bash
-    - Node
-    - VScode
-    - Wrangler will be installed to run & test the website locally and deploy to CloudFlare
-- Uses a CloudFlare worker to process a contact form and send an email
+The development environment requires:  
+    - Bash  
+    - Node  
+    - VScode  
+    - Wrangler will be installed to run & test the website locally and deploy to CloudFlare  
 
 ```
 # Clone the repository
