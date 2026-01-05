@@ -306,9 +306,10 @@
                 </div>
             </div>
         </div>
+        <a id="free-initial-consultation">
     </div>
 
-    <section class="book-section odd-section">
+    <section class="odd-section">
         <div class="container">
             <h2>Book a free initial consultation</h2>
 
@@ -316,7 +317,7 @@
                 <p>You want something to change.  Maybe you're feeling stuck, seeking clarity, or ready to move forward with something important. Whatever brought you here, an initial consultation is a no-pressure space to explore whether my coaching is right for you.</p>
                 <p>In our conversation, we'll talk about what matters most to you right now, what you're hoping to achieve, and how coaching might support you. There's no commitment - just an honest, open conversation about your goals and my approach.</p>
                 <p>Many people find that simply articulating what they want in a supportive space brings unexpected clarity. At the very least, you'll leave our call with something valuable. At best, it could be the first step toward the change you've been considering.</p>
-                <p><b>Choose a day &amp; time that works for you, or ask a question first via the <a href="#contact-section">contact form</a> below.</b></p>
+                <p><b>Choose a day &amp; time that works for you, or ask a question first via the <a href="#contact">contact form</a> below.</b></p>
             </div>
             <div class="form-container">
 			   <!-- Cal inline embed code begins -->
@@ -338,41 +339,41 @@
         </div>
     </section>
 
-    <section id="contact-section">
+    <section id="contact">
         <div class="container">
             <h2>Ask a question</h2>
             <div class="form-container">
 				<p class="subtitle">If there's no convenient time available, or you'd like to ask a question first, please fill in the form below and I'll get back to you as soon as possible.
                 </p>
-				<form id="contactForm">
+				<form id="contact-form">
 					<div class="form-group">
-						<label for="name">Name *</label>
-						<input type="text" id="name" name="name" placeholder="Your name" required>
+						<label for="contact-input-name">Name *</label>
+						<input type="text" id="contact-input-name" name="name" placeholder="Your name" required>
 					</div>
 
 					<div class="form-group">
-						<label for="contact">Email or phone*</label>
-						<input type="text" id="contact" name="contact" placeholder="Your email, or phone number for a reply by WhatsApp or SMS" required>
-                        <div class="error-message" id="contactError"></div>
+						<label for="contact-input-contact">Email or phone*</label>
+						<input type="text" id="contact-input-contact" name="contact" placeholder="Your email, or phone number for a reply by WhatsApp or SMS" required>
+                        <div class="error-message" id="contact-div-contact-error"></div>
 					</div>
 
 					<div class="form-group">
-						<label for="message">Message *</label>
-						<textarea id="message" name="message" required placeholder="Your message"></textarea>
+						<label for="contact-textarea-message">Message *</label>
+						<textarea id="contact-textarea-message" name="message" required placeholder="Your message"></textarea>
 					</div>
 
 					<div class="form-group">
-                        <label for="name">Are you human?</label>
+                        <label>Are you human?</label>
                         <div class="captcha-container">
                             <div class="cf-turnstile" data-sitekey="0x4AAAAAAB69zO3J9FFp4gVd"></div>
                         </div>
                     </div>
 
-                    <button type="submit" id="submitBtn">
+                    <button type="submit" id="contact-button-submit">
 						Send Message
 					</button>
 				</form>
-				<div id="statusMessage" class="message"></div>
+				<div id="contact-div-message" class="message"></div>
             </div>
         </div>
     </section>
@@ -381,16 +382,16 @@
         <div class="footer-content">
             <p><strong>inCharge Ltd</strong></p>
             <p>Remote coaching via Zoom | UK-based clients | <a href="inCharge-Terms-and-Conditions.pdf" target="_blank">Terms &amp; Conditions</a></p>
-            <p>Sessions: £80 per hour</p>
+            <p>Sessions: £75 per hour</p>
         </div>
     </footer>
 
     <script>
-        const form = document.getElementById('contactForm');
-        const submitBtn = document.getElementById('submitBtn');
-        const statusMessage = document.getElementById('statusMessage');
-        const contactInput = document.getElementById('contact');
-        const contactError = document.getElementById('contactError');
+        const form = document.getElementById('contact-form');
+        const submitBtn = document.getElementById('contact-button-submit');
+        const statusMessage = document.getElementById('contact-div-message');
+        const contactInput = document.getElementById('contact-input-contact');
+        const contactError = document.getElementById('contact-div-contact-error');
         let typingTimer;
         const typingDelay = 800;
 
@@ -457,9 +458,9 @@
             }
 
             const formData = {
-                name: document.getElementById('name').value,
-                replyto: document.getElementById('contact').value,
-                message: document.getElementById('message').value,
+                name: document.getElementById('contact-input-name').value,
+                replyto: document.getElementById('contact-input-contact').value,
+                message: document.getElementById('contact-textarea-message').value,
                 turnstileToken: turnstileResponse
             };
 

@@ -1,0 +1,9 @@
+#!/bin/bash
+# Make this script executable:
+#   chmod +x shortcuts
+# Run this script:
+#   source ./shortcuts
+# Add to ~/.bashrc
+#   source ~/cloudflare/shortcuts
+alias deploy="npm run deploy"
+alias dev="npm run dev"
